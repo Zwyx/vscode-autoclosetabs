@@ -1,0 +1,9 @@
+{
+	"scripts": {
+		"yo": "yo"
+	},
+	"dependencies": {
+		"generator-code": "^1.7.7",
+		"yo": "^4.3.1"
+	}
+}
