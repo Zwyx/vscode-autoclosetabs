@@ -1,27 +1,106 @@
 {
-	"name": "autoclose-tabs",
-	"displayName": "Autoclose Tabs",
+	"name": "autoclosetabs",
+	"displayName": "Auto Close Tabs",
+	"icon": "Zwyx-220x220-rounded.png",
 	"description": "Automatically close unused tabs",
 	"version": "0.0.1",
+	"repository": "github:zwyx/vscode-autoclosetabs",
 	"engines": {
 		"vscode": "^1.80.0"
 	},
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [],
+	"activationEvents": [
+		"onStartupFinished"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"configuration": [
+			{
+				"title": "Auto Close Tabs",
+				"properties": {
+					"autoclosetabs.activation": {
+						"type": "string",
+						"default": "everywhere-except-excluded",
+						"enum": [
+							"everywhere-except-excluded",
+							"nowhere-except-included"
+						],
+						"markdownEnumDescriptions": [
+							"Automatically close unused tabs in all workspaces, except the workspaces present in the Excluded list.",
+							"Automatically close unused tabs only in the workspaces present in the Included list."
+						],
+						"markdownDescription": "`everywhere-except-excluded`: automatically close unused tabs in all workspaces, except the workspaces present in the Excluded list.\n\n`nowhere-except-included`: automatically close unused tabs only in the workspaces present in the Included list."
+					},
+					"autoclosetabs.excludedWorkspaces": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"default": [],
+						"markdownDescription": "List of workspaces where unused tabs will not be automatically closed"
+					},
+					"autoclosetabs.includedWorkspaces": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"default": [],
+						"markdownDescription": "List of workspaces where unused tabs will be automatically closed"
+					},
+					"autoclosetabs.maximumNumberOfTabsInGroup": {
+						"type": "number",
+						"minimum": 0,
+						"default": 5,
+						"markdownDescription": "Unused tabs will be closed only if the number of tabs the group is greater than this number; enter `0` to close all unused tabs"
+					},
+					"autoclosetabs.tabAgeForAutomaticClosing": {
+						"type": "number",
+						"minimum": 1,
+						"default": 48,
+						"markdownDescription": "Number of hours after which an unused tab is automatically closed."
+					},
+					"autoclosetabs.tabAgeForClosingWithManualCommand": {
+						"type": "number",
+						"minimum": 1,
+						"default": 12,
+						"markdownDescription": "Number of hours after which an unused tab is closed when executing the command `Close unused tabs` from the command palette"
+					}
+				}
+			}
+		],
 		"commands": [
 			{
-				"command": "autoclose-tabs.helloWorld",
-				"title": "Hello World"
+				"command": "autoclosetabs.closeUnusedTabs",
+				"title": "Auto Close Tabs: Closed unused tabs"
+			},
+			{
+				"command": "autoclosetabs.activate",
+				"title": "Auto Close Tabs: Activate automatic closing of unused tabs for this workspace"
+			},
+			{
+				"command": "autoclosetabs.deactivate",
+				"title": "Auto Close Tabs: Deactivate automatic closing of unused tabs for this workspace"
 			}
-		]
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "autoclosetabs.activate",
+					"when": "!autoclosetabs.active"
+				},
+				{
+					"command": "autoclosetabs.deactivate",
+					"when": "autoclosetabs.active"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
+		"package": "vsce package",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
@@ -36,6 +115,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.59.8",
 		"@typescript-eslint/parser": "^5.59.8",
 		"@vscode/test-electron": "^2.3.2",
+		"@vscode/vsce": "^2.20.0",
 		"eslint": "^8.41.0",
 		"eslint-config-prettier": "^8.9.0",
 		"glob": "^8.1.0",
