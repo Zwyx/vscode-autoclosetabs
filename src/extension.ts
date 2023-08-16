@@ -97,7 +97,7 @@ const deactivateInWorkspace = () => {
 const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
 		vscode.commands.registerCommand("autoclosetabs.closeUnusedTabs", () =>
-			closeTabs(),
+			closeTabs(0, context),
 		),
 	);
 
@@ -114,7 +114,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 	);
 };
 
-const isActive = (): boolean => {
+const isActiveInWorkspace = (): boolean => {
 	const workspaceUri = getWorkspaceUri();
 
 	if (isActiveByDefault()) {
@@ -140,16 +140,16 @@ const isActive = (): boolean => {
 	}
 };
 
-const setActiveState = () =>
+const setActiveInWorkspaceState = () =>
 	vscode.commands.executeCommand(
 		"setContext",
-		"autoclosetabs.active",
-		isActive(),
+		"autoclosetabs.activeInWorkspace",
+		isActiveInWorkspace(),
 	);
 
 export function activate(context: vscode.ExtensionContext) {
 	registerCommands(context);
-	setActiveState();
+	setActiveInWorkspaceState();
 
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
@@ -158,30 +158,35 @@ export function activate(context: vscode.ExtensionContext) {
 				affectsConfiguration("autoclosetabs.excludedWorkspaces") ||
 				affectsConfiguration("autoclosetabs.includedWorkspaces")
 			) {
-				setActiveState();
+				setActiveInWorkspaceState();
 			}
 		}),
 	);
 
 	vscode.window.tabGroups.all.forEach((tabGroup) =>
-		tabGroup.tabs.forEach(resetTabTimeCounter),
+		tabGroup.tabs.forEach((tab) => resetTabTimeCounter(tab, context)),
 	);
 
 	context.subscriptions.push(
 		vscode.window.tabGroups.onDidChangeTabs(({ opened, changed, closed }) => {
-			[...opened, ...changed].forEach(resetTabTimeCounter);
-			closed.forEach(removeTabTimeCounter);
+			[...opened, ...changed].forEach((tab) =>
+				resetTabTimeCounter(tab, context),
+			);
+			closed.forEach((tab) => removeTabTimeCounter(tab, context));
 		}),
 	);
 
 	interval = setInterval(
 		() => {
 			vscode.window.tabGroups.all.forEach((tabGroup) =>
-				tabGroup.tabs.forEach(incrementTabTimeCounter),
+				tabGroup.tabs.forEach((tab) => incrementTabTimeCounter(tab, context)),
 			);
 
-			if (isActive()) {
-				closeTabs(getSettingValue("autoclosetabs.tabAgeForAutomaticClosing"));
+			if (isActiveInWorkspace()) {
+				closeTabs(
+					getSettingValue("autoclosetabs.tabAgeForAutomaticClosing"),
+					context,
+				);
 			}
 		},
 		INTERVAL_IN_MINUTES * 60 * 1000,

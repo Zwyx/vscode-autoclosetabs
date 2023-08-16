@@ -82,11 +82,11 @@
 			"commandPalette": [
 				{
 					"command": "autoclosetabs.activate",
-					"when": "!autoclosetabs.active"
+					"when": "!autoclosetabs.activeInWorkspace"
 				},
 				{
 					"command": "autoclosetabs.deactivate",
-					"when": "autoclosetabs.active"
+					"when": "autoclosetabs.activeInWorkspace"
 				}
 			]
 		}

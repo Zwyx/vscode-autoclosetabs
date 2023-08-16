@@ -2,7 +2,9 @@ import * as vscode from "vscode";
 import { INTERVAL_IN_MINUTES, log } from "./common";
 import { getSettingValue } from "./settings";
 
-const tabTimeCounters: {
+const TAB_TIME_COUNTERS_STORAGE_KEY = "tabTimeCounters";
+
+interface TabTimeCounters {
 	[tabGroupId: number]: {
 		/**
 		 * This number is:
@@ -13,9 +15,23 @@ const tabTimeCounters: {
 		 */
 		[tabUri: string]: number;
 	};
-} = {};
+}
 
-export const closeTabs = (maxTabAgeInHours = 0) => {
+const getTabTimeCounters = (
+	context: vscode.ExtensionContext,
+): TabTimeCounters =>
+	context.workspaceState.get(TAB_TIME_COUNTERS_STORAGE_KEY) || {};
+
+const setTabTimeCounters = (
+	tabTimeCounters: TabTimeCounters,
+	context: vscode.ExtensionContext,
+) =>
+	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
+
+export const closeTabs = (
+	maxTabAgeInHours: number,
+	context: vscode.ExtensionContext,
+) => {
 	log("Closing tabs!");
 
 	vscode.window.tabGroups.all.forEach((tabGroup) => {
@@ -50,7 +66,8 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 
 		const closableTabUris = Object.keys(closableTabsByUri);
 
-		const groupTabTimeCounters = tabTimeCounters[tabGroup.viewColumn];
+		const groupTabTimeCounters =
+			getTabTimeCounters(context)[tabGroup.viewColumn];
 
 		if (!groupTabTimeCounters) {
 			log("No group tab times");
@@ -75,7 +92,10 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 	});
 };
 
-export const resetTabTimeCounter = (tab: vscode.Tab) => {
+export const resetTabTimeCounter = (
+	tab: vscode.Tab,
+	context: vscode.ExtensionContext,
+) => {
 	log("Resetting tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
@@ -88,6 +108,8 @@ export const resetTabTimeCounter = (tab: vscode.Tab) => {
 		return;
 	}
 
+	const tabTimeCounters = getTabTimeCounters(context);
+
 	if (!tabTimeCounters[tab.group.viewColumn]) {
 		tabTimeCounters[tab.group.viewColumn] = {};
 	}
@@ -95,9 +117,14 @@ export const resetTabTimeCounter = (tab: vscode.Tab) => {
 	tabTimeCounters[tab.group.viewColumn][tabUri] = 0;
 
 	log(tabTimeCounters);
+
+	setTabTimeCounters(tabTimeCounters, context);
 };
 
-export const incrementTabTimeCounter = (tab: vscode.Tab) => {
+export const incrementTabTimeCounter = (
+	tab: vscode.Tab,
+	context: vscode.ExtensionContext,
+) => {
 	log("Incrementing tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
@@ -105,6 +132,8 @@ export const incrementTabTimeCounter = (tab: vscode.Tab) => {
 	}
 
 	const tabUri = tab.input.uri.toString();
+
+	const tabTimeCounters = getTabTimeCounters(context);
 
 	const tabTimeCounter = tabTimeCounters[tab.group.viewColumn]?.[tabUri];
 
@@ -115,9 +144,14 @@ export const incrementTabTimeCounter = (tab: vscode.Tab) => {
 	tabTimeCounters[tab.group.viewColumn][tabUri] = tabTimeCounter + 1;
 
 	log(tabTimeCounters);
+
+	setTabTimeCounters(tabTimeCounters, context);
 };
 
-export const removeTabTimeCounter = (tab: vscode.Tab) => {
+export const removeTabTimeCounter = (
+	tab: vscode.Tab,
+	context: vscode.ExtensionContext,
+) => {
 	log("Removing tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
@@ -126,9 +160,13 @@ export const removeTabTimeCounter = (tab: vscode.Tab) => {
 
 	const tabUri = tab.input.uri.toString();
 
+	const tabTimeCounters = getTabTimeCounters(context);
+
 	if (tabTimeCounters[tab.group.viewColumn]) {
 		delete tabTimeCounters[tab.group.viewColumn][tabUri];
 	}
 
 	log(tabTimeCounters);
+
+	setTabTimeCounters(tabTimeCounters, context);
 };
