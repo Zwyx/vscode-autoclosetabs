@@ -66,8 +66,8 @@
 		],
 		"commands": [
 			{
-				"command": "autoclosetabs.closeUnusedTabs",
-				"title": "Auto Close Tabs: Closed unused tabs"
+				"command": "autoclosetabs.closeAsManyTabsAsPossible",
+				"title": "Auto Close Tabs: Close as many tabs as possible"
 			},
 			{
 				"command": "autoclosetabs.activate",

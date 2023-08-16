@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import {
 	closeTabs,
+	createTabTimeCounters,
 	incrementTabTimeCounter,
 	removeTabTimeCounter,
 	resetTabTimeCounter,
+	storeTabTimeCounters,
 } from "./autoclosetabs";
 import { INTERVAL_IN_MINUTES, log } from "./common";
 import { getSettingValue, updateSettingValue } from "./settings";
@@ -96,8 +98,9 @@ const deactivateInWorkspace = () => {
 
 const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
-		vscode.commands.registerCommand("autoclosetabs.closeUnusedTabs", () =>
-			closeTabs(0, context),
+		vscode.commands.registerCommand(
+			"autoclosetabs.closeAsManyTabsAsPossible",
+			() => closeTabs(),
 		),
 	);
 
@@ -148,8 +151,11 @@ const setActiveInWorkspaceState = () =>
 	);
 
 export function activate(context: vscode.ExtensionContext) {
+	log("Activating autoclosetabs...");
+
 	registerCommands(context);
 	setActiveInWorkspaceState();
+	createTabTimeCounters(context);
 
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
@@ -163,39 +169,31 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 	);
 
-	vscode.window.tabGroups.all.forEach((tabGroup) =>
-		tabGroup.tabs.forEach((tab) => resetTabTimeCounter(tab, context)),
-	);
-
 	context.subscriptions.push(
 		vscode.window.tabGroups.onDidChangeTabs(({ opened, changed, closed }) => {
-			[...opened, ...changed].forEach((tab) =>
-				resetTabTimeCounter(tab, context),
-			);
-			closed.forEach((tab) => removeTabTimeCounter(tab, context));
+			[...opened, ...changed].forEach(resetTabTimeCounter);
+			closed.forEach(removeTabTimeCounter);
 		}),
 	);
 
 	interval = setInterval(
 		() => {
 			vscode.window.tabGroups.all.forEach((tabGroup) =>
-				tabGroup.tabs.forEach((tab) => incrementTabTimeCounter(tab, context)),
+				tabGroup.tabs.forEach(incrementTabTimeCounter),
 			);
 
+			storeTabTimeCounters(context);
+
 			if (isActiveInWorkspace()) {
-				closeTabs(
-					getSettingValue("autoclosetabs.tabAgeForAutomaticClosing"),
-					context,
-				);
+				closeTabs(getSettingValue("autoclosetabs.tabAgeForAutomaticClosing"));
 			}
 		},
 		INTERVAL_IN_MINUTES * 60 * 1000,
 	);
 }
 
-// This is not called when testing with the .vsix file; I hope it will be with the published extension
 export function deactivate() {
-	log("Deactivate autoclosetabs");
+	log("Deactivating autoclosetabs...");
 	log(interval);
 	clearInterval(interval);
 }

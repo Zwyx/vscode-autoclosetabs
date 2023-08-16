@@ -1,14 +1,14 @@
 # Auto Close Tabs
 
-This extension automatically closes tabs that have not been used for a defined length of time — 12 hours, by default.
+- **Automatically closes tabs that have not been used for a defined length of time** — 12 hours, by default.
 
-However, it only closes tabs if the group contains more than a defined number of tabs — 5, by default.
+- **Only closes tabs if the group contains more than a defined number of tabs** — 5, by default.
 
-Also, it doesn't close tabs that have changes, tabs that are pinned, and the active tab of each group.
+- **Doesn't close tabs that have changes, tabs that are pinned, and the active tab** of each group.
 
 The age of the opened tabs is persisted when the workspace is closed, and resumes incrementing when the workspace is reopened.
 
-The extension also provides the command `Auto Close Tabs: Closed as many tabs as possible` which close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
+The extension also provides the command `Auto Close Tabs: Close as many tabs as possible` which close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
 
 ## Extension Settings
 
