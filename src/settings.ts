@@ -13,17 +13,12 @@ const settings = {
 		type: "array",
 		default: [],
 	},
-	"autoclosetabs.maximumNumberOfTabsInGroup": {
+	"autoclosetabs.numberOfTabsInGroup": {
 		type: "number",
 		minimum: 0,
 		default: 5,
 	},
 	"autoclosetabs.tabAgeForAutomaticClosing": {
-		type: "number",
-		minimum: 1,
-		default: 48,
-	},
-	"autoclosetabs.tabAgeForClosingWithManualCommand": {
 		type: "number",
 		minimum: 1,
 		default: 12,
@@ -40,13 +35,10 @@ export function getSettingValue(
 	settingKey: "autoclosetabs.includedWorkspaces",
 ): string[];
 export function getSettingValue(
-	settingKey: "autoclosetabs.maximumNumberOfTabsInGroup",
+	settingKey: "autoclosetabs.numberOfTabsInGroup",
 ): number;
 export function getSettingValue(
 	settingKey: "autoclosetabs.tabAgeForAutomaticClosing",
-): number;
-export function getSettingValue(
-	settingKey: "autoclosetabs.tabAgeForClosingWithManualCommand",
 ): number;
 export function getSettingValue(
 	settingKey: SettingKey,

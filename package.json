@@ -39,7 +39,7 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces where unused tabs will not be automatically closed"
+						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed."
 					},
 					"autoclosetabs.includedWorkspaces": {
 						"type": "array",
@@ -47,25 +47,19 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces where unused tabs will be automatically closed"
+						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed."
 					},
-					"autoclosetabs.maximumNumberOfTabsInGroup": {
+					"autoclosetabs.numberOfTabsInGroup": {
 						"type": "number",
 						"minimum": 0,
 						"default": 5,
-						"markdownDescription": "Unused tabs will be closed only if the number of tabs the group is greater than this number; enter `0` to close all unused tabs"
+						"markdownDescription": "Unused tabs will be closed only if the number of tabs in the group is greater than this number; enter `0` to close all unused tabs."
 					},
 					"autoclosetabs.tabAgeForAutomaticClosing": {
 						"type": "number",
 						"minimum": 1,
-						"default": 48,
-						"markdownDescription": "Number of hours after which an unused tab is automatically closed."
-					},
-					"autoclosetabs.tabAgeForClosingWithManualCommand": {
-						"type": "number",
-						"minimum": 1,
 						"default": 12,
-						"markdownDescription": "Number of hours after which an unused tab is closed when executing the command `Close unused tabs` from the command palette"
+						"markdownDescription": "Number of hours after which an unused tab is automatically closed."
 					}
 				}
 			}
@@ -99,11 +93,11 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
+		"compile": "npm run lint && tsc -p ./",
 		"package": "vsce package",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
+		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
 		"test": "node ./out/test/runTest.js",
 		"prettier": "prettier -w ."
 	},

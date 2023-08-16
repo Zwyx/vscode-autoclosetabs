@@ -11,7 +11,7 @@ module.exports = {
 		sourceType: "module",
 	},
 	plugins: ["@typescript-eslint"],
-	ignorePatterns: ["out", "dist", "**/*.d.ts"],
+	ignorePatterns: ["/out", "**/*.d.ts"],
 	rules: {
 		// ---------- JavaScript ----------
 
