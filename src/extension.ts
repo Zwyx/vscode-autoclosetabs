@@ -7,7 +7,7 @@ import {
 	resetTabTimeCounter,
 	storeTabTimeCounters,
 } from "./autoclosetabs";
-import { INTERVAL_IN_MINUTES, log } from "./common";
+import { INTERVAL_IN_MINUTES, lg } from "./common";
 import { getSettingValue, updateSettingValue } from "./settings";
 
 let interval: ReturnType<typeof setInterval>;
@@ -16,7 +16,7 @@ const getWorkspaceUri = (): string | null => {
 	const workspaceFileUri = vscode.workspace.workspaceFile?.toString();
 
 	if (workspaceFileUri && !workspaceFileUri.startsWith("untitled:")) {
-		log(`Workspace file URI is ${workspaceFileUri}`);
+		lg(`Workspace file URI is ${workspaceFileUri}`);
 		return workspaceFileUri;
 	}
 
@@ -24,11 +24,11 @@ const getWorkspaceUri = (): string | null => {
 
 	if (workspaceFolders?.length === 1) {
 		const workspaceFolderUri = workspaceFolders[0].uri.toString();
-		log(`Workspace folder URI is ${workspaceFolderUri}`);
+		lg(`Workspace folder URI is ${workspaceFolderUri}`);
 		return workspaceFolderUri;
 	}
 
-	log("No permanent workspace URI");
+	lg("No permanent workspace URI");
 
 	return null;
 };
@@ -151,7 +151,7 @@ const setActiveInWorkspaceState = () =>
 	);
 
 export function activate(context: vscode.ExtensionContext) {
-	log("Activating autoclosetabs...");
+	console.info("Activating autoclosetabs...");
 
 	registerCommands(context);
 	setActiveInWorkspaceState();
@@ -193,7 +193,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	log("Deactivating autoclosetabs...");
-	log(interval);
+	console.info("Deactivating autoclosetabs...");
+	lg(interval);
 	clearInterval(interval);
 }

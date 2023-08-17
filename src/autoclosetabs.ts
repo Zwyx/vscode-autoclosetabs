@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { INTERVAL_IN_MINUTES, log } from "./common";
+import { INTERVAL_IN_MINUTES, lg } from "./common";
 import { getSettingValue } from "./settings";
 
 const TAB_TIME_COUNTERS_STORAGE_KEY = "tabTimeCounters";
@@ -20,7 +20,7 @@ interface TabTimeCounters {
 let tabTimeCounters: TabTimeCounters = {};
 
 export const resetTabTimeCounter = (tab: vscode.Tab) => {
-	log("Resetting tab time counter...");
+	lg("Resetting tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
 		return;
@@ -28,7 +28,7 @@ export const resetTabTimeCounter = (tab: vscode.Tab) => {
 
 	const tabUri = tab.input.uri.toString();
 
-	log(tabUri);
+	lg(tabUri);
 
 	if (tabUri.startsWith("untitled:")) {
 		return;
@@ -40,11 +40,11 @@ export const resetTabTimeCounter = (tab: vscode.Tab) => {
 
 	tabTimeCounters[tab.group.viewColumn][tabUri] = 0;
 
-	log(tabTimeCounters);
+	lg(tabTimeCounters);
 };
 
 export const incrementTabTimeCounter = (tab: vscode.Tab) => {
-	log("Incrementing tab time counter...");
+	lg("Incrementing tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
 		return;
@@ -52,7 +52,7 @@ export const incrementTabTimeCounter = (tab: vscode.Tab) => {
 
 	const tabUri = tab.input.uri.toString();
 
-	log(tabUri);
+	lg(tabUri);
 
 	const tabTimeCounter = tabTimeCounters[tab.group.viewColumn]?.[tabUri];
 
@@ -62,11 +62,11 @@ export const incrementTabTimeCounter = (tab: vscode.Tab) => {
 
 	tabTimeCounters[tab.group.viewColumn][tabUri] = tabTimeCounter + 1;
 
-	log(tabTimeCounters);
+	lg(tabTimeCounters);
 };
 
 export const removeTabTimeCounter = (tab: vscode.Tab) => {
-	log("Removing tab time counter...");
+	lg("Removing tab time counter...");
 
 	if (!(tab.input instanceof vscode.TabInputText)) {
 		return;
@@ -74,21 +74,21 @@ export const removeTabTimeCounter = (tab: vscode.Tab) => {
 
 	const tabUri = tab.input.uri.toString();
 
-	log(tabUri);
+	lg(tabUri);
 
 	if (tabTimeCounters[tab.group.viewColumn]) {
 		delete tabTimeCounters[tab.group.viewColumn][tabUri];
 	}
 
-	log(tabTimeCounters);
+	lg(tabTimeCounters);
 };
 
 export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 	const storedTabTimeCounters: TabTimeCounters =
 		context.workspaceState.get(TAB_TIME_COUNTERS_STORAGE_KEY) || {};
 
-	log("storedTabTimeCounters");
-	log(storedTabTimeCounters);
+	lg("storedTabTimeCounters");
+	lg(storedTabTimeCounters);
 
 	tabTimeCounters = {};
 
@@ -115,25 +115,25 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 		}),
 	);
 
-	log("tabTimeCounters");
-	log(tabTimeCounters);
+	lg("tabTimeCounters");
+	lg(tabTimeCounters);
 };
 
 export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
 
 export const closeTabs = (maxTabAgeInHours = 0) => {
-	log("Closing tabs!");
+	lg("Closing tabs!");
 
 	vscode.window.tabGroups.all.forEach((tabGroup) => {
-		log(`Group ${tabGroup.viewColumn}`);
+		lg(`Group ${tabGroup.viewColumn}`);
 
 		const maxTabsInGroup = getSettingValue("autoclosetabs.numberOfTabsInGroup");
 
 		const numberOfTabsExtra = tabGroup.tabs.length - maxTabsInGroup;
 
 		if (numberOfTabsExtra < 1) {
-			log("No tabs in extra");
+			lg("No tabs in extra");
 			return;
 		}
 
@@ -160,7 +160,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 		const groupTabTimeCounters = tabTimeCounters[tabGroup.viewColumn];
 
 		if (!groupTabTimeCounters) {
-			log("No group tab times");
+			lg("No group tab times");
 			return;
 		}
 
@@ -176,7 +176,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.map(([timeCounter, uri]) => [uri, timeCounter])
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
-				log(`Group ${tabGroup.viewColumn} - Closing tab ${uri}`);
+				lg(`Group ${tabGroup.viewColumn} - Closing tab ${uri}`);
 				vscode.window.tabGroups.close(closableTabsByUri[uri]);
 			});
 	});
