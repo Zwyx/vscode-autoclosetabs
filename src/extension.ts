@@ -147,7 +147,7 @@ const setActiveInWorkspaceState = () =>
 	vscode.commands.executeCommand(
 		"setContext",
 		"autoclosetabs.activeInWorkspace",
-		isActiveInWorkspace(),
+		isActiveInWorkspace() ? "yes" : "no",
 	);
 
 export function activate(context: vscode.ExtensionContext) {
