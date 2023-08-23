@@ -4,7 +4,7 @@
 	"icon": "Zwyx-220x220-rounded.png",
 	"description": "Automatically close unused tabs",
 	"version": "1.0.0",
-	"publisher": "Zwyx",
+	"publisher": "zwyx",
 	"repository": "github:zwyx/vscode-autoclosetabs",
 	"engines": {
 		"vscode": "^1.80.0"

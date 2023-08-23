@@ -10,6 +10,8 @@ The age of the opened tabs is persisted when the workspace is closed, and resume
 
 ## Commands
 
+In addition to automatically closing unused tabs, the extension provides the following commands.
+
 ### `Auto Close Tabs: Close as many tabs as possible`
 
 Close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
