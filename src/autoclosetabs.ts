@@ -19,6 +19,14 @@ interface TabTimeCounters {
 
 let tabTimeCounters: TabTimeCounters = {};
 
+let closedTabs: {
+	date: string;
+	tabGroup: string;
+	tabUri: string;
+}[] = [];
+
+let webview: vscode.WebviewPanel | undefined;
+
 export const resetTabTimeCounter = (tab: vscode.Tab) => {
 	lg("Resetting tab time counter...");
 
@@ -117,10 +125,57 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 
 	lg("tabTimeCounters");
 	lg(tabTimeCounters);
+
+	closedTabs = [];
 };
 
 export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
+
+const updateWebview = () => {
+	if (!webview) {
+		return;
+	}
+
+	webview.webview.html = `
+	<h3>Automatically closed tabs since this workspace was opened</h3>
+
+	<ul>
+		${
+			closedTabs.length
+				? closedTabs
+						.map(({ date: time, tabGroup, tabUri }) => {
+							const { dirpath, filename } = tabUri.includes("/")
+								? {
+										dirpath: tabUri.slice(0, tabUri.lastIndexOf("/") + 1),
+										filename: tabUri.slice(tabUri.lastIndexOf("/") + 1),
+								  }
+								: { dirpath: tabUri, filename: "" };
+
+							return `<li>${time} group:${tabGroup} ${dirpath}<strong>${filename}</strong></li>`;
+						})
+						.join("\n")
+				: "[None]"
+		}
+	</ul>
+	`;
+};
+
+export const listAutomaticallyClosedTabs = () => {
+	if (webview) {
+		webview.reveal();
+	} else {
+		webview = vscode.window.createWebviewPanel(
+			"autoclosetabs",
+			"Auto Close Tabs",
+			vscode.ViewColumn.Active,
+		);
+
+		webview.onDidDispose(() => (webview = undefined));
+	}
+
+	updateWebview();
+};
 
 export const closeTabs = (maxTabAgeInHours = 0) => {
 	lg("Closing tabs!");
@@ -164,6 +219,17 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			return;
 		}
 
+		const now = new Date();
+
+		const fullYear = now.getFullYear();
+		const month = now.getMonth();
+		const day = now.getDay();
+		const hours = now.getHours();
+		const minutes = now.getMinutes();
+		const seconds = now.getSeconds();
+
+		const date = `${fullYear}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
 		Object.entries(groupTabTimeCounters)
 			.filter(
 				([, timeCounter]) =>
@@ -177,7 +243,14 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
 				lg(`Group ${tabGroup.viewColumn} - Closing tab ${uri}`);
+				closedTabs.push({
+					date,
+					tabGroup: tabGroup.viewColumn.toString(),
+					tabUri: uri.toString(),
+				});
 				vscode.window.tabGroups.close(closableTabsByUri[uri]);
 			});
 	});
+
+	updateWebview();
 };

@@ -8,9 +8,17 @@
 
 The age of the opened tabs is persisted when the workspace is closed, and resumes incrementing when the workspace is reopened.
 
-The extension also provides the command `Auto Close Tabs: Close as many tabs as possible` which close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
+## Commands
 
-## Extension Settings
+### `Auto Close Tabs: Close as many tabs as possible`
+
+Close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
+
+### `Auto Close Tabs: List recently closed tabs`
+
+List the tabs that have been automatically closed since the workspace was opened. Use it to adjust the `autoclosetabs.numberOfTabsInGroup` and `autoclosetabs.tabAgeForAutomaticClosing` settings if you find that tabs are closed more/less often than you wish.
+
+## Settings
 
 ### `autoclosetabs.activation`
 
@@ -20,6 +28,8 @@ Can be one of two values:
 - `nowhere-except-included`: the extension will automatically close unused tabs only in the workspaces present in the `Included` list.
 
 The default value is `everywhere-except-excluded`.
+
+> Note: this way of activating tab auto-closing allows you to do it on a per project/workspace basis, without relying on a project's `.vscode/settings.json` file, as this file is often committed and shared with collaborators.
 
 ### `autoclosetabs.excludedWorkspaces`
 

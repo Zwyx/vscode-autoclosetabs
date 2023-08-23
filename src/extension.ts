@@ -3,6 +3,7 @@ import {
 	closeTabs,
 	createTabTimeCounters,
 	incrementTabTimeCounter,
+	listAutomaticallyClosedTabs,
 	removeTabTimeCounter,
 	resetTabTimeCounter,
 	storeTabTimeCounters,
@@ -113,6 +114,13 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
 		vscode.commands.registerCommand("autoclosetabs.deactivate", () =>
 			deactivateInWorkspace(),
+		),
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(
+			"autoclosetabs.listAutomaticallyClosedTabs",
+			() => listAutomaticallyClosedTabs(),
 		),
 	);
 };

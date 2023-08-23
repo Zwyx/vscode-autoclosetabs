@@ -77,6 +77,10 @@
 			{
 				"command": "autoclosetabs.deactivate",
 				"title": "Auto Close Tabs: Deactivate automatic closing of unused tabs for this workspace"
+			},
+			{
+				"command": "autoclosetabs.listAutomaticallyClosedTabs",
+				"title": "Auto Close Tabs: List automatically closed tabs"
 			}
 		],
 		"menus": {
