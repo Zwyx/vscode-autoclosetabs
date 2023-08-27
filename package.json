@@ -40,7 +40,7 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed."
+						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed. Only used when `autoclosetabs.activation` is equal to `everywhere-except-excluded`."
 					},
 					"autoclosetabs.includedWorkspaces": {
 						"type": "array",
@@ -48,7 +48,7 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed."
+						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed. Only used when `autoclosetabs.activation` is equal to `nowhere-except-included`."
 					},
 					"autoclosetabs.numberOfTabsInGroup": {
 						"type": "number",
