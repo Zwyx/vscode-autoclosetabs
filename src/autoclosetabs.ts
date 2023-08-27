@@ -21,8 +21,8 @@ let tabTimeCounters: TabTimeCounters = {};
 
 let closedTabs: {
 	date: string;
-	tabGroup: string;
-	tabUri: string;
+	group: string;
+	label: string;
 }[] = [];
 
 let webview: vscode.WebviewPanel | undefined;
@@ -138,26 +138,26 @@ const updateWebview = () => {
 	}
 
 	webview.webview.html = `
-	<h3>Automatically closed tabs since this workspace was opened</h3>
+		<style>
+			li {
+				font-family: monospace;
+			}
+		</style>
 
-	<ul>
-		${
-			closedTabs.length
-				? closedTabs
-						.map(({ date: time, tabGroup, tabUri }) => {
-							const { dirpath, filename } = tabUri.includes("/")
-								? {
-										dirpath: tabUri.slice(0, tabUri.lastIndexOf("/") + 1),
-										filename: tabUri.slice(tabUri.lastIndexOf("/") + 1),
-								  }
-								: { dirpath: tabUri, filename: "" };
+		<h3>Automatically closed tabs since this workspace was opened</h3>
 
-							return `<li>${time} group:${tabGroup} ${dirpath}<strong>${filename}</strong></li>`;
-						})
-						.join("\n")
-				: "[None]"
-		}
-	</ul>
+		<ul>
+			${
+				closedTabs.length
+					? closedTabs
+							.map(
+								({ date: time, group, label }) =>
+									`<li>${time} group:${group} <strong>${label}</strong></li>`,
+							)
+							.join("\n")
+					: "[None]"
+			}
+		</ul>
 	`;
 };
 
@@ -222,11 +222,11 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 		const now = new Date();
 
 		const fullYear = now.getFullYear();
-		const month = now.getMonth();
-		const day = now.getDay();
-		const hours = now.getHours();
-		const minutes = now.getMinutes();
-		const seconds = now.getSeconds();
+		const month = now.getMonth().toString().slice(-2);
+		const day = now.getDate().toString().slice(-2);
+		const hours = now.getHours().toString().slice(-2);
+		const minutes = now.getMinutes().toString().slice(-2);
+		const seconds = now.getSeconds().toString().slice(-2);
 
 		const date = `${fullYear}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
@@ -242,13 +242,18 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.map(([timeCounter, uri]) => [uri, timeCounter])
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
-				lg(`Group ${tabGroup.viewColumn} - Closing tab ${uri}`);
+				const tab = closableTabsByUri[uri];
+				const label = tab.label;
+
+				lg(`Group ${tabGroup.viewColumn} - Closing tab ${label}`);
+
 				closedTabs.push({
 					date,
-					tabGroup: tabGroup.viewColumn.toString(),
-					tabUri: uri.toString(),
+					group: tabGroup.viewColumn.toString(),
+					label,
 				});
-				vscode.window.tabGroups.close(closableTabsByUri[uri]);
+
+				vscode.window.tabGroups.close(tab);
 			});
 	});
 
