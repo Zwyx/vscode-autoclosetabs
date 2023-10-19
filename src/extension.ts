@@ -159,7 +159,7 @@ const setActiveInWorkspaceState = () =>
 	);
 
 export function activate(context: vscode.ExtensionContext) {
-	console.info("Activating autoclosetabs...");
+	lg("Activating Auto Close Tabs...");
 
 	registerCommands(context);
 	setActiveInWorkspaceState();
@@ -201,7 +201,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	console.info("Deactivating autoclosetabs...");
+	lg("Deactivating Auto Close Tabs...");
 	lg(interval);
 	clearInterval(interval);
 }
