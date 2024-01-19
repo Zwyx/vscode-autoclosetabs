@@ -222,7 +222,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 		const now = new Date();
 
 		const fullYear = now.getFullYear();
-		const month = `0${now.getMonth().toString()}`.slice(-2);
+		const month = `0${(now.getMonth() + 1).toString()}`.slice(-2);
 		const day = `0${now.getDate().toString()}`.slice(-2);
 		const hours = `0${now.getHours().toString()}`.slice(-2);
 		const minutes = `0${now.getMinutes().toString()}`.slice(-2);
