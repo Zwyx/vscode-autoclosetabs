@@ -18,7 +18,7 @@ const settings = {
 		minimum: 0,
 		default: 5,
 	},
-	"tabarchive.tabAgeForAutomaticClosing": {
+	"tabarchive.tabAgeForAutomaticArchiving": {
 		type: "number",
 		minimum: 1,
 		default: 12,
@@ -38,7 +38,7 @@ export function getSettingValue(
 	settingKey: "tabarchive.numberOfTabsInGroup",
 ): number;
 export function getSettingValue(
-	settingKey: "tabarchive.tabAgeForAutomaticClosing",
+	settingKey: "tabarchive.tabAgeForAutomaticArchiving",
 ): number;
 export function getSettingValue(
 	settingKey: SettingKey,

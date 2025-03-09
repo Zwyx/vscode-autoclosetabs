@@ -11,7 +11,7 @@ interface TabTimeCounters {
 		 *   - created and set to 0 when a tab is opened;
 		 *   - reset to 0 when the tab change;
 		 *   - incremented at every interval while the tab is opened;
-		 *   - removed when the tab is closed
+		 *   - removed when the tab is archived
 		 */
 		[tabUri: string]: number;
 	};
@@ -19,14 +19,14 @@ interface TabTimeCounters {
 
 let tabTimeCounters: TabTimeCounters = {};
 
-interface ClosedTabInfo {
+interface ArchivedTabInfo {
 	date: string;
 	group: string;
 	label: string;
 	uri: string;
 }
 
-const closedTabs = new Map<string, ClosedTabInfo>();
+const archivedTabs = new Map<string, ArchivedTabInfo>();
 
 const createTabKey = (group: string, label: string, uri: string): string => {
 	return `${group}:${label}:${uri}`;
@@ -131,14 +131,14 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 	lg("tabTimeCounters");
 	lg(tabTimeCounters);
 
-	closedTabs.clear();
+	archivedTabs.clear();
 };
 
 export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
 
-export const listAutomaticallyClosedTabs = async () => {
-	const items = Array.from(closedTabs.values()).map(({ group, label, uri }) => ({
+export const listArchivedTabs = async () => {
+	const items = Array.from(archivedTabs.values()).map(({ group, label, uri }) => ({
 		label,
 		description: `Group: ${group}`,
 		detail: uri,
@@ -147,7 +147,7 @@ export const listAutomaticallyClosedTabs = async () => {
 	}));
 
 	const selectedItem = await vscode.window.showQuickPick(items, {
-		placeHolder: 'Automatically closed tabs since this workspace was opened',
+		placeHolder: 'Archived tabs since this workspace was opened',
 		matchOnDescription: true,
 		matchOnDetail: true,
 	});
@@ -162,8 +162,8 @@ export const listAutomaticallyClosedTabs = async () => {
 	}
 };
 
-export const closeTabs = (maxTabAgeInHours = 0) => {
-	lg("Closing tabs!");
+export const archiveTabs = (maxTabAgeInHours = 0) => {
+	lg("Archiving tabs!");
 
 	vscode.window.tabGroups.all.forEach((tabGroup) => {
 		lg(`Group ${tabGroup.viewColumn}`);
@@ -177,7 +177,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			return;
 		}
 
-		const closableTabsByUri = new Map<string, vscode.Tab>();
+		const archivableTabsByUri = new Map<string, vscode.Tab>();
 		tabGroup.tabs
 			.filter(
 				(tab) =>
@@ -188,7 +188,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			)
 			.forEach((tab) => {
 				if (tab.input instanceof vscode.TabInputText) {
-					closableTabsByUri.set(tab.input.uri.toString(), tab);
+					archivableTabsByUri.set(tab.input.uri.toString(), tab);
 				}
 			});
 
@@ -215,7 +215,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 				([, timeCounter]) =>
 					(timeCounter * INTERVAL_IN_MINUTES) / 60 > maxTabAgeInHours,
 			)
-			.filter(([uri]) => closableTabsByUri.has(uri))
+			.filter(([uri]) => archivableTabsByUri.has(uri))
 			.map(([uri, timeCounter]) => [timeCounter, uri])
 			.sort()
 			.reverse()
@@ -223,16 +223,16 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
 				const tabUri = String(uri);
-				const tab = closableTabsByUri.get(String(uri));
+				const tab = archivableTabsByUri.get(String(uri));
 				if (!tab) {
 					return;
 				}
 				const label = tab.label;
 
-				lg(`Group ${tabGroup.viewColumn} - Closing tab ${label}`);
+				lg(`Group ${tabGroup.viewColumn} - Archiving tab ${label}`);
 
 				const tabKey = createTabKey(tabGroup.viewColumn.toString(), label, tabUri);
-				closedTabs.set(tabKey, {
+				archivedTabs.set(tabKey, {
 					date,
 					group: tabGroup.viewColumn.toString(),
 					label,

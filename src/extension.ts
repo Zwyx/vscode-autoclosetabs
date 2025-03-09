@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
+import { INTERVAL_IN_MINUTES, lg } from "./common";
+import { getSettingValue, updateSettingValue } from "./settings";
 import {
-	closeTabs,
+	archiveTabs,
 	createTabTimeCounters,
 	incrementTabTimeCounter,
-	listAutomaticallyClosedTabs,
+	listArchivedTabs,
 	removeTabTimeCounter,
 	resetTabTimeCounter,
 	storeTabTimeCounters,
-} from "./autoclosetabs";
-import { INTERVAL_IN_MINUTES, lg } from "./common";
-import { getSettingValue, updateSettingValue } from "./settings";
+} from "./tabarchive";
 
 let interval: ReturnType<typeof setInterval>;
 
@@ -100,8 +100,8 @@ const deactivateInWorkspace = () => {
 const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"tabarchive.closeAsManyTabsAsPossible",
-			() => closeTabs(),
+			"tabarchive.archiveAsManyTabsAsPossible",
+			() => archiveTabs(),
 		),
 	);
 
@@ -119,8 +119,8 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"tabarchive.listAutomaticallyClosedTabs",
-			() => listAutomaticallyClosedTabs(),
+			"tabarchive.listArchivedTabs",
+			() => listArchivedTabs(),
 		),
 	);
 };
@@ -193,7 +193,7 @@ export function activate(context: vscode.ExtensionContext) {
 			storeTabTimeCounters(context);
 
 			if (isActiveInWorkspace()) {
-				closeTabs(getSettingValue("tabarchive.tabAgeForAutomaticClosing"));
+				archiveTabs(getSettingValue("tabarchive.tabAgeForAutomaticArchiving"));
 			}
 		},
 		INTERVAL_IN_MINUTES * 60 * 1000,

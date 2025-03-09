@@ -29,10 +29,10 @@
 							"nowhere-except-included"
 						],
 						"markdownEnumDescriptions": [
-							"Automatically close unused tabs in all workspaces, except the workspaces present in the Excluded list.",
-							"Automatically close unused tabs only in the workspaces present in the Included list."
+							"Automatically archive unused tabs in all workspaces, except the workspaces present in the Excluded list.",
+							"Automatically archive unused tabs only in the workspaces present in the Included list."
 						],
-						"markdownDescription": "`everywhere-except-excluded`: automatically close unused tabs in all workspaces, except the workspaces present in the Excluded list.\n\n`nowhere-except-included`: automatically close unused tabs only in the workspaces present in the Included list."
+						"markdownDescription": "`everywhere-except-excluded`: automatically archive unused tabs in all workspaces, except the workspaces present in the Excluded list.\n\n`nowhere-except-included`: automatically archive unused tabs only in the workspaces present in the Included list."
 					},
 					"tabarchive.excludedWorkspaces": {
 						"type": "array",
@@ -40,7 +40,7 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed. Only used when `tabarchive.activation` is equal to `everywhere-except-excluded`."
+						"markdownDescription": "List of workspaces in which unused tabs will not be automatically archived. Only used when `tabarchive.activation` is equal to `everywhere-except-excluded`."
 					},
 					"tabarchive.includedWorkspaces": {
 						"type": "array",
@@ -48,39 +48,39 @@
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed. Only used when `tabarchive.activation` is equal to `nowhere-except-included`."
+						"markdownDescription": "List of workspaces in which unused tabs will be automatically archived. Only used when `tabarchive.activation` is equal to `nowhere-except-included`."
 					},
 					"tabarchive.numberOfTabsInGroup": {
 						"type": "number",
 						"minimum": 0,
 						"default": 5,
-						"markdownDescription": "Unused tabs will be closed only if the number of tabs in the group is greater than this number; enter `0` to close all unused tabs."
+						"markdownDescription": "Unused tabs will be archived only if the number of tabs in the group is greater than this number; enter `0` to archive all unused tabs."
 					},
-					"tabarchive.tabAgeForAutomaticClosing": {
+					"tabarchive.tabAgeForAutomaticArchiving": {
 						"type": "number",
 						"minimum": 1,
 						"default": 12,
-						"markdownDescription": "Number of hours after which an unused tab is automatically closed."
+						"markdownDescription": "Number of hours after which an unused tab is automatically archived."
 					}
 				}
 			}
 		],
 		"commands": [
 			{
-				"command": "tabarchive.closeAsManyTabsAsPossible",
-				"title": "Tab Archive: Close as many tabs as possible"
+				"command": "tabarchive.archiveAsManyTabsAsPossible",
+				"title": "Tab Archive: Archive as many tabs as possible"
 			},
 			{
 				"command": "tabarchive.activate",
-				"title": "Tab Archive: Activate automatic closing of unused tabs for this workspace"
+				"title": "Tab Archive: Activate automatic archiving of unused tabs for this workspace"
 			},
 			{
 				"command": "tabarchive.deactivate",
-				"title": "Tab Archive: Deactivate automatic closing of unused tabs for this workspace"
+				"title": "Tab Archive: Deactivate automatic archiving of unused tabs for this workspace"
 			},
 			{
-				"command": "tabarchive.listAutomaticallyClosedTabs",
-				"title": "Tab Archive: List automatically closed tabs"
+				"command": "tabarchive.listArchivedTabs",
+				"title": "Tab Archive: List recently archived tabs"
 			}
 		],
 		"menus": {
