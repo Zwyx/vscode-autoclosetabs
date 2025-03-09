@@ -19,12 +19,18 @@ interface TabTimeCounters {
 
 let tabTimeCounters: TabTimeCounters = {};
 
-let closedTabs: {
+interface ClosedTabInfo {
 	date: string;
 	group: string;
 	label: string;
 	uri: string;
-}[] = [];
+}
+
+const closedTabs = new Map<string, ClosedTabInfo>();
+
+const createTabKey = (group: string, label: string, uri: string): string => {
+	return `${group}:${label}:${uri}`;
+};
 
 export const resetTabTimeCounter = (tab: vscode.Tab) => {
 	lg("Resetting tab time counter...");
@@ -125,18 +131,18 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 	lg("tabTimeCounters");
 	lg(tabTimeCounters);
 
-	closedTabs = [];
+	closedTabs.clear();
 };
 
 export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
 
 export const listAutomaticallyClosedTabs = async () => {
-	const items = closedTabs.map(({ date, group, label, uri }) => ({
-		label: label,
+	const items = Array.from(closedTabs.values()).map(({ group, label, uri }) => ({
+		label,
 		description: `Group: ${group}`,
-		detail: `Closed at: ${date}`,
-		uri: uri,
+		detail: uri,
+		uri,
 		iconPath: new vscode.ThemeIcon("file"),
 	}));
 
@@ -162,7 +168,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 	vscode.window.tabGroups.all.forEach((tabGroup) => {
 		lg(`Group ${tabGroup.viewColumn}`);
 
-		const maxTabsInGroup = getSettingValue("autoclosetabs.numberOfTabsInGroup");
+		const maxTabsInGroup = getSettingValue("tabarchive.numberOfTabsInGroup");
 
 		const numberOfTabsExtra = tabGroup.tabs.length - maxTabsInGroup;
 
@@ -218,12 +224,15 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.forEach(([uri]) => {
 				const tabUri = String(uri);
 				const tab = closableTabsByUri.get(String(uri));
-				if (!tab) return;
+				if (!tab) {
+					return;
+				}
 				const label = tab.label;
 
 				lg(`Group ${tabGroup.viewColumn} - Closing tab ${label}`);
 
-				closedTabs.push({
+				const tabKey = createTabKey(tabGroup.viewColumn.toString(), label, tabUri);
+				closedTabs.set(tabKey, {
 					date,
 					group: tabGroup.viewColumn.toString(),
 					label,

@@ -1,11 +1,11 @@
 {
-	"name": "autoclosetabs",
-	"displayName": "Auto Close Tabs",
+	"name": "tabarchive",
+	"displayName": "Tab Archive",
 	"icon": "Zwyx-220x220-rounded.png",
-	"description": "Automatically close unused tabs",
-	"version": "1.1.3",
-	"publisher": "zwyx",
-	"repository": "github:zwyx/vscode-autoclosetabs",
+	"description": "Unused tab archive",
+	"version": "1.0.0",
+	"publisher": "guza",
+	"repository": "github:guuzaa/vscode-tabarchive",
 	"engines": {
 		"vscode": "^1.80.0"
 	},
@@ -19,9 +19,9 @@
 	"contributes": {
 		"configuration": [
 			{
-				"title": "Auto Close Tabs",
+				"title": "Tab Archive",
 				"properties": {
-					"autoclosetabs.activation": {
+					"tabarchive.activation": {
 						"type": "string",
 						"default": "everywhere-except-excluded",
 						"enum": [
@@ -34,29 +34,29 @@
 						],
 						"markdownDescription": "`everywhere-except-excluded`: automatically close unused tabs in all workspaces, except the workspaces present in the Excluded list.\n\n`nowhere-except-included`: automatically close unused tabs only in the workspaces present in the Included list."
 					},
-					"autoclosetabs.excludedWorkspaces": {
+					"tabarchive.excludedWorkspaces": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed. Only used when `autoclosetabs.activation` is equal to `everywhere-except-excluded`."
+						"markdownDescription": "List of workspaces in which unused tabs will not be automatically closed. Only used when `tabarchive.activation` is equal to `everywhere-except-excluded`."
 					},
-					"autoclosetabs.includedWorkspaces": {
+					"tabarchive.includedWorkspaces": {
 						"type": "array",
 						"items": {
 							"type": "string"
 						},
 						"default": [],
-						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed. Only used when `autoclosetabs.activation` is equal to `nowhere-except-included`."
+						"markdownDescription": "List of workspaces in which unused tabs will be automatically closed. Only used when `tabarchive.activation` is equal to `nowhere-except-included`."
 					},
-					"autoclosetabs.numberOfTabsInGroup": {
+					"tabarchive.numberOfTabsInGroup": {
 						"type": "number",
 						"minimum": 0,
 						"default": 5,
 						"markdownDescription": "Unused tabs will be closed only if the number of tabs in the group is greater than this number; enter `0` to close all unused tabs."
 					},
-					"autoclosetabs.tabAgeForAutomaticClosing": {
+					"tabarchive.tabAgeForAutomaticClosing": {
 						"type": "number",
 						"minimum": 1,
 						"default": 12,
@@ -67,31 +67,31 @@
 		],
 		"commands": [
 			{
-				"command": "autoclosetabs.closeAsManyTabsAsPossible",
-				"title": "Auto Close Tabs: Close as many tabs as possible"
+				"command": "tabarchive.closeAsManyTabsAsPossible",
+				"title": "Tab Archive: Close as many tabs as possible"
 			},
 			{
-				"command": "autoclosetabs.activate",
-				"title": "Auto Close Tabs: Activate automatic closing of unused tabs for this workspace"
+				"command": "tabarchive.activate",
+				"title": "Tab Archive: Activate automatic closing of unused tabs for this workspace"
 			},
 			{
-				"command": "autoclosetabs.deactivate",
-				"title": "Auto Close Tabs: Deactivate automatic closing of unused tabs for this workspace"
+				"command": "tabarchive.deactivate",
+				"title": "Tab Archive: Deactivate automatic closing of unused tabs for this workspace"
 			},
 			{
-				"command": "autoclosetabs.listAutomaticallyClosedTabs",
-				"title": "Auto Close Tabs: List automatically closed tabs"
+				"command": "tabarchive.listAutomaticallyClosedTabs",
+				"title": "Tab Archive: List automatically closed tabs"
 			}
 		],
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "autoclosetabs.activate",
-					"when": "autoclosetabs.activeInWorkspace === 'no'"
+					"command": "tabarchive.activate",
+					"when": "tabarchive.activeInWorkspace === 'no'"
 				},
 				{
-					"command": "autoclosetabs.deactivate",
-					"when": "autoclosetabs.activeInWorkspace === 'yes'"
+					"command": "tabarchive.deactivate",
+					"when": "tabarchive.activeInWorkspace === 'yes'"
 				}
 			]
 		}

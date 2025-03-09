@@ -1,24 +1,24 @@
 import * as vscode from "vscode";
 
 const settings = {
-	"autoclosetabs.activation": {
+	"tabarchive.activation": {
 		type: "string",
 		default: "everywhere-except-excluded",
 	},
-	"autoclosetabs.excludedWorkspaces": {
+	"tabarchive.excludedWorkspaces": {
 		type: "array",
 		default: [],
 	},
-	"autoclosetabs.includedWorkspaces": {
+	"tabarchive.includedWorkspaces": {
 		type: "array",
 		default: [],
 	},
-	"autoclosetabs.numberOfTabsInGroup": {
+	"tabarchive.numberOfTabsInGroup": {
 		type: "number",
 		minimum: 0,
 		default: 5,
 	},
-	"autoclosetabs.tabAgeForAutomaticClosing": {
+	"tabarchive.tabAgeForAutomaticClosing": {
 		type: "number",
 		minimum: 1,
 		default: 12,
@@ -27,18 +27,18 @@ const settings = {
 
 type SettingKey = keyof typeof settings;
 
-export function getSettingValue(settingKey: "autoclosetabs.activation"): string;
+export function getSettingValue(settingKey: "tabarchive.activation"): string;
 export function getSettingValue(
-	settingKey: "autoclosetabs.excludedWorkspaces",
+	settingKey: "tabarchive.excludedWorkspaces",
 ): string[];
 export function getSettingValue(
-	settingKey: "autoclosetabs.includedWorkspaces",
+	settingKey: "tabarchive.includedWorkspaces",
 ): string[];
 export function getSettingValue(
-	settingKey: "autoclosetabs.numberOfTabsInGroup",
+	settingKey: "tabarchive.numberOfTabsInGroup",
 ): number;
 export function getSettingValue(
-	settingKey: "autoclosetabs.tabAgeForAutomaticClosing",
+	settingKey: "tabarchive.tabAgeForAutomaticClosing",
 ): number;
 export function getSettingValue(
 	settingKey: SettingKey,

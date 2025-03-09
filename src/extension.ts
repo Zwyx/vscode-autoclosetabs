@@ -35,20 +35,20 @@ const getWorkspaceUri = (): string | null => {
 };
 
 const isActiveByDefault = () =>
-	getSettingValue("autoclosetabs.activation") !== "nowhere-except-included";
+	getSettingValue("tabarchive.activation") !== "nowhere-except-included";
 
 const activateInWorkspace = () => {
 	const workspaceUri = getWorkspaceUri();
 
 	if (!workspaceUri) {
 		vscode.window.showInformationMessage(
-			"Auto Close Tabs cannot be activated in a temporary workspace.",
+			"Tab Archive cannot be activated in a temporary workspace.",
 		);
 		return;
 	}
 
 	if (isActiveByDefault()) {
-		const settingSection = "autoclosetabs.excludedWorkspaces";
+		const settingSection = "tabarchive.excludedWorkspaces";
 
 		const excludedWorkspaces = getSettingValue(settingSection);
 
@@ -59,7 +59,7 @@ const activateInWorkspace = () => {
 			),
 		);
 	} else {
-		const settingSection = "autoclosetabs.includedWorkspaces";
+		const settingSection = "tabarchive.includedWorkspaces";
 
 		const includedWorkspaces = getSettingValue(settingSection);
 
@@ -72,19 +72,19 @@ const deactivateInWorkspace = () => {
 
 	if (!workspaceUri) {
 		vscode.window.showInformationMessage(
-			"Auto Close Tabs cannot be deactivated in a temporary workspace.",
+			"Tab Archive cannot be deactivated in a temporary workspace.",
 		);
 		return;
 	}
 
 	if (isActiveByDefault()) {
-		const settingSection = "autoclosetabs.excludedWorkspaces";
+		const settingSection = "tabarchive.excludedWorkspaces";
 
 		const excludedWorkspaces = getSettingValue(settingSection);
 
 		updateSettingValue(settingSection, [...excludedWorkspaces, workspaceUri]);
 	} else {
-		const settingSection = "autoclosetabs.includedWorkspaces";
+		const settingSection = "tabarchive.includedWorkspaces";
 
 		const includedWorkspaces = getSettingValue(settingSection);
 
@@ -100,26 +100,26 @@ const deactivateInWorkspace = () => {
 const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"autoclosetabs.closeAsManyTabsAsPossible",
+			"tabarchive.closeAsManyTabsAsPossible",
 			() => closeTabs(),
 		),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("autoclosetabs.activate", () =>
+		vscode.commands.registerCommand("tabarchive.activate", () =>
 			activateInWorkspace(),
 		),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("autoclosetabs.deactivate", () =>
+		vscode.commands.registerCommand("tabarchive.deactivate", () =>
 			deactivateInWorkspace(),
 		),
 	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"autoclosetabs.listAutomaticallyClosedTabs",
+			"tabarchive.listAutomaticallyClosedTabs",
 			() => listAutomaticallyClosedTabs(),
 		),
 	);
@@ -134,7 +134,7 @@ const isActiveInWorkspace = (): boolean => {
 		}
 
 		const excludedWorkspaces = getSettingValue(
-			"autoclosetabs.excludedWorkspaces",
+			"tabarchive.excludedWorkspaces",
 		);
 
 		return !excludedWorkspaces.includes(workspaceUri);
@@ -144,7 +144,7 @@ const isActiveInWorkspace = (): boolean => {
 		}
 
 		const includedWorkspaces = getSettingValue(
-			"autoclosetabs.includedWorkspaces",
+			"tabarchive.includedWorkspaces",
 		);
 
 		return includedWorkspaces.includes(workspaceUri);
@@ -154,12 +154,12 @@ const isActiveInWorkspace = (): boolean => {
 const setActiveInWorkspaceState = () =>
 	vscode.commands.executeCommand(
 		"setContext",
-		"autoclosetabs.activeInWorkspace",
+		"tabarchive.activeInWorkspace",
 		isActiveInWorkspace() ? "yes" : "no",
 	);
 
 export function activate(context: vscode.ExtensionContext) {
-	lg("Activating Auto Close Tabs...");
+	lg("Activating Tab Archive...");
 
 	registerCommands(context);
 	setActiveInWorkspaceState();
@@ -168,9 +168,9 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
 			if (
-				affectsConfiguration("autoclosetabs.activation") ||
-				affectsConfiguration("autoclosetabs.excludedWorkspaces") ||
-				affectsConfiguration("autoclosetabs.includedWorkspaces")
+				affectsConfiguration("tabarchive.activation") ||
+				affectsConfiguration("tabarchive.excludedWorkspaces") ||
+				affectsConfiguration("tabarchive.includedWorkspaces")
 			) {
 				setActiveInWorkspaceState();
 			}
@@ -193,7 +193,7 @@ export function activate(context: vscode.ExtensionContext) {
 			storeTabTimeCounters(context);
 
 			if (isActiveInWorkspace()) {
-				closeTabs(getSettingValue("autoclosetabs.tabAgeForAutomaticClosing"));
+				closeTabs(getSettingValue("tabarchive.tabAgeForAutomaticClosing"));
 			}
 		},
 		INTERVAL_IN_MINUTES * 60 * 1000,
@@ -201,7 +201,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	lg("Deactivating Auto Close Tabs...");
+	lg("Deactivating Tab Archive...");
 	lg(interval);
 	clearInterval(interval);
 }

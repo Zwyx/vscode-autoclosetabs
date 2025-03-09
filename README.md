@@ -1,4 +1,4 @@
-# Auto Close Tabs
+# Tab Archive
 
 - **Automatically closes tabs that have not been used for a defined length of time** — 12 hours, by default.
 
@@ -12,17 +12,17 @@ The age of the opened tabs is persisted when the workspace is closed, and resume
 
 In addition to automatically closing unused tabs, the extension provides the following commands.
 
-### `Auto Close Tabs: Close as many tabs as possible`
+### `Tab Archive: Close as many tabs as possible`
 
 Close all tabs except the 5 (by default) most recently used ones, in each group. (It also doesn't close tabs with changes, pinned tabs, and the active one.)
 
-### `Auto Close Tabs: List recently closed tabs`
+### `Tab Archive: List recently closed tabs`
 
-List the tabs that have been automatically closed since the workspace was opened. Use it to adjust the `autoclosetabs.numberOfTabsInGroup` and `autoclosetabs.tabAgeForAutomaticClosing` settings if you find that tabs are closed more/less often than you wish.
+List the tabs that have been automatically closed since the workspace was opened. Use it to adjust the `tabarchive.numberOfTabsInGroup` and `tabarchive.tabAgeForAutomaticClosing` settings if you find that tabs are closed more/less often than you wish.
 
 ## Settings
 
-### `autoclosetabs.activation`
+### `tabarchive.activation`
 
 Can be one of two values:
 
@@ -33,29 +33,29 @@ The default value is `everywhere-except-excluded`.
 
 > Note: this way of activating tab auto-closing allows you to do it on a per project/workspace basis, without relying on a project's `.vscode/settings.json` file, as this file is often committed and shared with collaborators.
 
-### `autoclosetabs.excludedWorkspaces`
+### `tabarchive.excludedWorkspaces`
 
-> This setting is only used when `autoclosetabs.activation` is equal to `everywhere-except-excluded`.
+> This setting is only used when `tabarchive.activation` is equal to `everywhere-except-excluded`.
 
 List of workspaces in which the extension will not automatically close unused tabs.
 
-To add a workspace to this list, use the command `Auto Close Tabs: Deactivate automatic closing of unused tabs for this workspace`.
+To add a workspace to this list, use the command `Tab Archive: Deactivate automatic closing of unused tabs for this workspace`.
 
-### `autoclosetabs.includedWorkspaces`
+### `tabarchive.includedWorkspaces`
 
-> This setting is only used when `autoclosetabs.activation` is equal to `nowhere-except-included`.
+> This setting is only used when `tabarchive.activation` is equal to `nowhere-except-included`.
 
 List of workspaces in which the extension will automatically close unused tabs.
 
-To add a workspace to this list, use the command `Auto Close Tabs: Activate automatic closing of unused tabs for this workspace`.
+To add a workspace to this list, use the command `Tab Archive: Activate automatic closing of unused tabs for this workspace`.
 
-### `autoclosetabs.numberOfTabsInGroup`
+### `tabarchive.numberOfTabsInGroup`
 
 Unused tabs will be closed only if the number of tabs in the group is greater than this number; enter `0` to close all unused tabs.
 
 The default value is `5`.
 
-### `autoclosetabs.tabAgeForAutomaticClosing`
+### `tabarchive.tabAgeForAutomaticClosing`
 
 Number of hours after which an unused tab is automatically closed.
 
@@ -65,8 +65,4 @@ The default value is `12`.
 
 ### 1.0.0
 
-Initial release of Auto Close Tabs.
-
-## 1.1.0
-
-- Improve display of automatically closed tabs.
+Initial release of Tab Archive.
