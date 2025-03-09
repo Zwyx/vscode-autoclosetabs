@@ -192,25 +192,20 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			return;
 		}
 
-		const closableTabsByUri = Object.fromEntries(
-			tabGroup.tabs
-				.filter(
-					(tab) =>
-						tab.input instanceof vscode.TabInputText &&
-						!tab.isPinned &&
-						!tab.isDirty &&
-						!tab.isActive,
-				)
-				.map((tab) => [
-					// Bloody TypeScript...
-					tab.input instanceof vscode.TabInputText
-						? tab.input.uri.toString()
-						: "",
-					tab,
-				]),
-		);
-
-		const closableTabUris = Object.keys(closableTabsByUri);
+		const closableTabsByUri = new Map<string, vscode.Tab>();
+		tabGroup.tabs
+			.filter(
+				(tab) =>
+					tab.input instanceof vscode.TabInputText &&
+					!tab.isPinned &&
+					!tab.isDirty &&
+					!tab.isActive,
+			)
+			.forEach((tab) => {
+				if (tab.input instanceof vscode.TabInputText) {
+					closableTabsByUri.set(tab.input.uri.toString(), tab);
+				}
+			});
 
 		const groupTabTimeCounters = tabTimeCounters[tabGroup.viewColumn];
 
@@ -235,14 +230,15 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 				([, timeCounter]) =>
 					(timeCounter * INTERVAL_IN_MINUTES) / 60 > maxTabAgeInHours,
 			)
-			.filter(([uri]) => closableTabUris.includes(uri))
+			.filter(([uri]) => closableTabsByUri.has(uri))
 			.map(([uri, timeCounter]) => [timeCounter, uri])
 			.sort()
 			.reverse()
 			.map(([timeCounter, uri]) => [uri, timeCounter])
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
-				const tab = closableTabsByUri[uri];
+				const tab = closableTabsByUri.get(String(uri));
+				if (!tab) return;
 				const label = tab.label;
 
 				lg(`Group ${tabGroup.viewColumn} - Closing tab ${label}`);
