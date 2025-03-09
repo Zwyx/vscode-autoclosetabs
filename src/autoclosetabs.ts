@@ -23,9 +23,8 @@ let closedTabs: {
 	date: string;
 	group: string;
 	label: string;
+	uri: string;
 }[] = [];
-
-let webview: vscode.WebviewPanel | undefined;
 
 export const resetTabTimeCounter = (tab: vscode.Tab) => {
 	lg("Resetting tab time counter...");
@@ -132,49 +131,29 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 	context.workspaceState.update(TAB_TIME_COUNTERS_STORAGE_KEY, tabTimeCounters);
 
-const updateWebview = () => {
-	if (!webview) {
-		return;
+export const listAutomaticallyClosedTabs = async () => {
+	const items = closedTabs.map(({ date, group, label, uri }) => ({
+		label: label,
+		description: `Group: ${group}`,
+		detail: `Closed at: ${date}`,
+		uri: uri,
+		iconPath: new vscode.ThemeIcon("file"),
+	}));
+
+	const selectedItem = await vscode.window.showQuickPick(items, {
+		placeHolder: 'Automatically closed tabs since this workspace was opened',
+		matchOnDescription: true,
+		matchOnDetail: true,
+	});
+
+	if (selectedItem && selectedItem.uri) {
+		try {
+			const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(selectedItem.uri));
+			await vscode.window.showTextDocument(document);
+		} catch (error) {
+			vscode.window.showErrorMessage(`Failed to open file: ${error instanceof Error ? error.message : String(error)}`);
+		}
 	}
-
-	webview.webview.html = `
-		<style>
-			li {
-				font-family: monospace;
-			}
-		</style>
-
-		<h3>Automatically closed tabs since this workspace was opened</h3>
-
-		<ul>
-			${
-				closedTabs.length
-					? closedTabs
-							.map(
-								({ date: time, group, label }) =>
-									`<li>${time} group:${group} <strong>${label}</strong></li>`,
-							)
-							.join("\n")
-					: "[None]"
-			}
-		</ul>
-	`;
-};
-
-export const listAutomaticallyClosedTabs = () => {
-	if (webview) {
-		webview.reveal();
-	} else {
-		webview = vscode.window.createWebviewPanel(
-			"autoclosetabs",
-			"Auto Close Tabs",
-			vscode.ViewColumn.Active,
-		);
-
-		webview.onDidDispose(() => (webview = undefined));
-	}
-
-	updateWebview();
 };
 
 export const closeTabs = (maxTabAgeInHours = 0) => {
@@ -237,6 +216,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 			.map(([timeCounter, uri]) => [uri, timeCounter])
 			.slice(0, numberOfTabsExtra)
 			.forEach(([uri]) => {
+				const tabUri = String(uri);
 				const tab = closableTabsByUri.get(String(uri));
 				if (!tab) return;
 				const label = tab.label;
@@ -247,11 +227,10 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 					date,
 					group: tabGroup.viewColumn.toString(),
 					label,
+					uri: tabUri,
 				});
 
 				vscode.window.tabGroups.close(tab);
 			});
 	});
-
-	updateWebview();
 };
