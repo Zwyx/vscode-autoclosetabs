@@ -139,11 +139,12 @@ export const storeTabTimeCounters = (context: vscode.ExtensionContext) =>
 
 export const listArchivedTabs = async () => {
 	const items = Array.from(archivedTabs.values()).map(({ group, label, uri }) => ({
-		label,
 		description: `Group: ${group}`,
 		detail: uri,
-		uri,
+		group,
 		iconPath: new vscode.ThemeIcon("file"),
+		label,
+		uri,
 	}));
 
 	const selectedItem = await vscode.window.showQuickPick(items, {
@@ -157,6 +158,8 @@ export const listArchivedTabs = async () => {
 			const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(selectedItem.uri));
 			await vscode.window.showTextDocument(document);
 		} catch (error) {
+			const key = createTabKey(selectedItem.group, selectedItem.label, selectedItem.uri);
+			archivedTabs.delete(key);
 			vscode.window.showErrorMessage(`Failed to open file: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}

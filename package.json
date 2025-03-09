@@ -1,7 +1,7 @@
 {
 	"name": "tabarchive",
 	"displayName": "Tab Archive",
-	"icon": "Zwyx-220x220-rounded.png",
+	"icon": "logo-220x220.png",
 	"description": "Unused tab archive",
 	"version": "1.0.0",
 	"publisher": "guza",
