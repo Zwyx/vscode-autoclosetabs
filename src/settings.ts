@@ -20,7 +20,7 @@ const settings = {
 	},
 	"autoclosetabs.tabAgeForAutomaticClosing": {
 		type: "number",
-		minimum: 1,
+		minimum: 0.01,
 		default: 12,
 	},
 };
