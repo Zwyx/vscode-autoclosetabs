@@ -99,8 +99,8 @@
 	"scripts": {
 		"build": "npm run lint && tsc -p ./",
 		"package": "vsce package",
-		"vscode:prepublish": "npm run build",
-		"publish": "vsce publish",
+		"vscode:publish": "vsce publish",
+		"openvsx:publish": "ovsx publish",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run build",
 		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
@@ -120,6 +120,7 @@
 		"eslint-config-prettier": "^8.9.0",
 		"glob": "^8.1.0",
 		"mocha": "^10.8.2",
+		"ovsx": "^0.10.6",
 		"prettier": "3.0.0",
 		"typescript": "^5.1.3"
 	}
