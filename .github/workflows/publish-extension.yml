@@ -24,9 +24,9 @@ jobs:
 
       - run: npm run build
 
-      - env:
-          VSCE_PAT: "${{ secrets.VSCE_PAT }}"
-        run: npm run vscode:publish
+      # - env:
+      #     VSCE_PAT: "${{ secrets.VSCE_PAT }}"
+      #   run: npm run vscode:publish
 
       - env:
           OVSX_PAT: "${{ secrets.OVSX_PAT }}"
