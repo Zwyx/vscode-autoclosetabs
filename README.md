@@ -60,13 +60,3 @@ The default value is `5`.
 Number of hours after which an unused tab is automatically closed.
 
 The default value is `12`.
-
-## Release notes
-
-### 1.0.0
-
-Initial release of Auto Close Tabs.
-
-## 1.1.0
-
-- Improve display of automatically closed tabs.
