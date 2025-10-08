@@ -8,8 +8,13 @@
 		"rootDir": "src",
 
 		"strict": true,
-		"noImplicitReturns": true,
-		// "noUncheckedIndexedAccess": true,
-		"noUncheckedSideEffectImports": true
+		"noUncheckedSideEffectImports": true,
+		"noImplicitReturns": true
+
+		// `noUncheckedIndexedAccess` was added when converting
+		//  the extension to a web extension, but no code change was required;
+		// since the extension has been extensively tested and works well, there
+		// is no need to refactor the code now only to activate this.
+		// "noUncheckedIndexedAccess": true
 	}
 }

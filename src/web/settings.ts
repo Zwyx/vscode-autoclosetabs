@@ -29,16 +29,14 @@ type SettingKey = keyof typeof settings;
 
 export function getSettingValue(settingKey: "autoclosetabs.activation"): string;
 export function getSettingValue(
-	settingKey: "autoclosetabs.excludedWorkspaces",
+	settingKey:
+		| "autoclosetabs.excludedWorkspaces"
+		| "autoclosetabs.includedWorkspaces",
 ): string[];
 export function getSettingValue(
-	settingKey: "autoclosetabs.includedWorkspaces",
-): string[];
-export function getSettingValue(
-	settingKey: "autoclosetabs.numberOfTabsInGroup",
-): number;
-export function getSettingValue(
-	settingKey: "autoclosetabs.tabAgeForAutomaticClosing",
+	settingKey:
+		| "autoclosetabs.numberOfTabsInGroup"
+		| "autoclosetabs.tabAgeForAutomaticClosing",
 ): number;
 export function getSettingValue(
 	settingKey: SettingKey,
@@ -67,6 +65,8 @@ export function getSettingValue(
 
 		return value;
 	}
+
+	return undefined;
 }
 
 export const updateSettingValue = (section: SettingKey, value: unknown) =>

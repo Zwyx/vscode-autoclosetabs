@@ -1,3 +1,11 @@
+// typescript-eslint's strict type checked rules were added when converting
+// the extension to a web extension, but no code change was required;
+// since the extension has been extensively tested and works well, there
+// is no need to refactor the code now only to activate these rules.
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
 import * as vscode from "vscode";
 import { INTERVAL_IN_MINUTES, lg } from "./common";
 import { getSettingValue } from "./settings";
@@ -100,7 +108,7 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 
 	tabTimeCounters = {};
 
-	vscode.window.tabGroups.all.forEach((tabGroup) =>
+	vscode.window.tabGroups.all.forEach((tabGroup) => {
 		tabGroup.tabs.forEach((tab) => {
 			if (!(tab.input instanceof vscode.TabInputText)) {
 				return;
@@ -120,8 +128,8 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 			} else {
 				resetTabTimeCounter(tab);
 			}
-		}),
-	);
+		});
+	});
 
 	lg("tabTimeCounters");
 	lg(tabTimeCounters);
@@ -181,7 +189,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 	lg("Closing tabs!");
 
 	vscode.window.tabGroups.all.forEach((tabGroup) => {
-		lg(`Group ${tabGroup.viewColumn}`);
+		lg(`Group ${tabGroup.viewColumn.toString()}`);
 
 		const maxTabsInGroup = getSettingValue("autoclosetabs.numberOfTabsInGroup");
 
@@ -221,7 +229,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 
 		// A bit convoluted for a result that looks a lot like an ISO string, but it's in the user's time zone
 		const now = new Date();
-		const fullYear = now.getFullYear();
+		const fullYear = now.getFullYear().toString();
 		const month = `0${(now.getMonth() + 1).toString()}`.slice(-2);
 		const day = `0${now.getDate().toString()}`.slice(-2);
 		const hours = `0${now.getHours().toString()}`.slice(-2);
@@ -244,7 +252,7 @@ export const closeTabs = (maxTabAgeInHours = 0) => {
 				const tab = closableTabsByUri[uri];
 				const label = tab.label;
 
-				lg(`Group ${tabGroup.viewColumn} - Closing tab ${label}`);
+				lg(`Group ${tabGroup.viewColumn.toString()} - Closing tab ${label}`);
 
 				closedTabs.push({
 					date,

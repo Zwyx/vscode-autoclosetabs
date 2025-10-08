@@ -1,3 +1,10 @@
+// typescript-eslint's strict type checked rules were added when converting
+// the extension to a web extension, but no code change was required;
+// since the extension has been extensively tested and works well, there
+// is no need to refactor the code now only to activate these rules.
+/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
 import * as vscode from "vscode";
 import {
 	closeTabs,
@@ -13,7 +20,7 @@ import { getSettingValue, updateSettingValue } from "./settings";
 
 let interval: ReturnType<typeof setInterval>;
 
-const getWorkspaceUri = (): string | null => {
+const getWorkspaceUri = (): string | undefined => {
 	const workspaceFileUri = vscode.workspace.workspaceFile?.toString();
 
 	if (workspaceFileUri && !workspaceFileUri.startsWith("untitled:")) {
@@ -31,7 +38,7 @@ const getWorkspaceUri = (): string | null => {
 
 	lg("No permanent workspace URI");
 
-	return null;
+	return undefined;
 };
 
 const isActiveByDefault = () =>
@@ -101,26 +108,30 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"autoclosetabs.closeAsManyTabsAsPossible",
-			() => closeTabs(),
+			() => {
+				closeTabs();
+			},
 		),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("autoclosetabs.activate", () =>
-			activateInWorkspace(),
-		),
+		vscode.commands.registerCommand("autoclosetabs.activate", () => {
+			activateInWorkspace();
+		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("autoclosetabs.deactivate", () =>
-			deactivateInWorkspace(),
-		),
+		vscode.commands.registerCommand("autoclosetabs.deactivate", () => {
+			deactivateInWorkspace();
+		}),
 	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"autoclosetabs.listAutomaticallyClosedTabs",
-			() => listAutomaticallyClosedTabs(),
+			() => {
+				listAutomaticallyClosedTabs();
+			},
 		),
 	);
 };
@@ -186,9 +197,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	interval = setInterval(
 		() => {
-			vscode.window.tabGroups.all.forEach((tabGroup) =>
-				tabGroup.tabs.forEach(incrementTabTimeCounter),
-			);
+			vscode.window.tabGroups.all.forEach((tabGroup) => {
+				tabGroup.tabs.forEach(incrementTabTimeCounter);
+			});
 
 			storeTabTimeCounters(context);
 

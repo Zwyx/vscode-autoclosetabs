@@ -12,14 +12,14 @@ export function run(): Promise<void> {
 			// Run the mocha test
 			mocha.run((failures) => {
 				if (failures > 0) {
-					e(new Error(`${failures} tests failed.`));
+					e(new Error(`${failures.toString()} tests failed.`));
 				} else {
 					c();
 				}
 			});
 		} catch (err) {
 			console.error(err);
-			e(err);
+			e(err as Error);
 		}
 	});
 }
