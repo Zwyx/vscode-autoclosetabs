@@ -152,7 +152,7 @@ const updateWebview = () => {
 			}
 		</style>
 
-		<h3>Automatically closed tabs since this workspace was opened</h3>
+		<h3>Tabs closed since this workspace was opened</h3>
 
 		<ul>
 			${
