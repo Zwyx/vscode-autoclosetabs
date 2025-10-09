@@ -107,11 +107,11 @@
 		"package-web": "npm run check-types && npm run lint && node esbuild.js --production",
 		"check-types": "tsc --noEmit",
 		"run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. .",
+		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+		"prettier": "prettier -w .",
 		"package": "vsce package",
 		"vscode:publish": "vsce publish",
-		"openvsx:publish": "ovsx publish",
-		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
-		"prettier": "prettier -w ."
+		"openvsx:publish": "ovsx publish"
 	},
 	"devDependencies": {
 		"@esbuild-plugins/node-globals-polyfill": "^0.2.3",
