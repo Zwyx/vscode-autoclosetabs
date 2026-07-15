@@ -154,7 +154,18 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 		context.workspaceState.get(TAB_TIME_COUNTERS_STORAGE_KEY) || {};
 
 	lg("storedTabTimeCounters");
-	lg(storedTabTimeCounters);
+	lg(JSON.stringify(storedTabTimeCounters, undefined, 2));
+
+	for (const tabGroup in storedTabTimeCounters) {
+		for (const tabTimeCounter in storedTabTimeCounters[tabGroup]) {
+			if (tabTimeCounter.startsWith("webview")) {
+				delete storedTabTimeCounters[tabGroup][tabTimeCounter];
+			}
+		}
+	}
+
+	lg("storedTabTimeCounters without webviews");
+	lg(JSON.stringify(storedTabTimeCounters, undefined, 2));
 
 	tabTimeCounters = {};
 
