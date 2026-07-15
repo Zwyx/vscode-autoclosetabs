@@ -35,6 +35,29 @@ let closedTabs: {
 
 let webview: vscode.WebviewPanel | undefined;
 
+/**
+ * Webview tab inputs expose no URI, and several webview tabs can share the
+ * same view type and label, so an ID cannot be derived from the input alone.
+ * However, VS Code keeps the identity of a Tab object stable for the
+ * lifetime of the tab, so we can assign our own number to each webview tab.
+ * These numbers are not persisted: after a window reload, webview tabs
+ * simply start aging from zero again.
+ */
+const webviewTabNumbers = new WeakMap<vscode.Tab, number>();
+let nextWebviewTabNumber = 1;
+
+const getWebviewTabNumber = (tab: vscode.Tab): number => {
+	const existingNumber = webviewTabNumbers.get(tab);
+
+	if (existingNumber !== undefined) {
+		return existingNumber;
+	}
+
+	const number = nextWebviewTabNumber++;
+	webviewTabNumbers.set(tab, number);
+	return number;
+};
+
 const getTabId = (tab: vscode.Tab): string | undefined => {
 	const input = tab.input;
 
@@ -55,7 +78,7 @@ const getTabId = (tab: vscode.Tab): string | undefined => {
 	}
 
 	if (input instanceof vscode.TabInputWebview) {
-		return `webview:${input.viewType}:${tab.label}`;
+		return `webview:${input.viewType}:${getWebviewTabNumber(tab)}`;
 	}
 
 	// Tab might be a terminal, or an unknown kind of tab
