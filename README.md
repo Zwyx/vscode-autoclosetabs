@@ -4,9 +4,11 @@
 
 - **Only closes tabs if the group contains more than a defined number of tabs** — 5, by default.
 
-- **Doesn't close tabs that have unsaved changes, tabs that are pinned, tabs that aren't editors, and the active tab** of each group.
+- **Doesn't close tabs that have unsaved changes, tabs that are pinned, and the active tab** of each group.
 
-The age of the opened tabs is persisted when the workspace is closed, and resumes incrementing when the workspace is reopened.
+Editors, notebooks, and webviews are taken into account, but special tabs like terminals and settings are not.
+
+The age of each opened tab is persisted when the workspace is closed, and resumes incrementing when the workspace is reopened (except for webviews).
 
 ## Commands
 
@@ -14,7 +16,7 @@ In addition to automatically closing unused tabs, the extension provides the fol
 
 ### `Auto Close Tabs: Close as many tabs as possible`
 
-Close all tabs except 5 (by default) of the most recently used ones, in each group. It also doesn't close tabs with unsaved changes, tabs that are pinned, tabs that aren't editors (terminals, previews, etc.), and the active tab.
+Close all tabs except 5 (by default) of the most recently used ones, in each group. It also doesn't close tabs with unsaved changes, tabs that are pinned, and the active tab.
 
 ### `Auto Close Tabs: List recently closed tabs`
 
