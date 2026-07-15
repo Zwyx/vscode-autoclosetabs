@@ -39,23 +39,27 @@ let webview: vscode.WebviewPanel | undefined;
  * Webview tab inputs expose no URI, and several webview tabs can share the
  * same view type and label, so an ID cannot be derived from the input alone.
  * However, VS Code keeps the identity of a Tab object stable for the
- * lifetime of the tab, so we can assign our own number to each webview tab.
- * These numbers are not persisted: after a window reload, webview tabs
- * simply start aging from zero again.
+ * lifetime of the tab, so we can assign our own index to each webview tab.
+ * See https://github.com/microsoft/vscode/blob/main/src/vs/workbench/api/common/extHostEditorTabs.ts#L165C1-L165C73
+ * These indexes are not persisted: after a window reload, webview tabs
+ * simply start aging from zero again (so we do not restore the tab time counters
+ * for webviews in `createTabTimeCounters` below).
  */
-const webviewTabNumbers = new WeakMap<vscode.Tab, number>();
-let nextWebviewTabNumber = 1;
+const webviewTabIndexes = new WeakMap<vscode.Tab, string>();
+let nextWebviewTabIndex = 1;
 
-const getWebviewTabNumber = (tab: vscode.Tab): number => {
-	const existingNumber = webviewTabNumbers.get(tab);
+const getWebviewTabIndex = (tab: vscode.Tab): string => {
+	const existingIndex = webviewTabIndexes.get(tab);
 
-	if (existingNumber !== undefined) {
-		return existingNumber;
+	if (existingIndex !== undefined) {
+		return existingIndex;
 	}
 
-	const number = nextWebviewTabNumber++;
-	webviewTabNumbers.set(tab, number);
-	return number;
+	const index = (nextWebviewTabIndex++).toString();
+
+	webviewTabIndexes.set(tab, index);
+
+	return index;
 };
 
 const getTabId = (tab: vscode.Tab): string | undefined => {
@@ -78,10 +82,10 @@ const getTabId = (tab: vscode.Tab): string | undefined => {
 	}
 
 	if (input instanceof vscode.TabInputWebview) {
-		return `webview:${input.viewType}:${getWebviewTabNumber(tab)}`;
+		return `webview:${input.viewType}:${getWebviewTabIndex(tab)}`;
 	}
 
-	// Tab might be a terminal, or an unknown kind of tab
+	// Tab might be a terminal, a settings editor, or an unknown kind of tab
 	return undefined;
 };
 
@@ -156,6 +160,7 @@ export const createTabTimeCounters = (context: vscode.ExtensionContext) => {
 	lg("storedTabTimeCounters");
 	lg(JSON.stringify(storedTabTimeCounters, undefined, 2));
 
+	// Clear webviews' tab time counters – see `webviewTabIndexes` above
 	for (const tabGroup in storedTabTimeCounters) {
 		for (const tabTimeCounter in storedTabTimeCounters[tabGroup]) {
 			if (tabTimeCounter.startsWith("webview")) {
